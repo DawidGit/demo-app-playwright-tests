@@ -1,5 +1,7 @@
 node_modules/
 
+fixtures/auth-state.json
+
 playwright-report/
 test-results/
 /blob-report/
