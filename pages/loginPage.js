@@ -1,4 +1,5 @@
-const { chromium, firefox, webkit } = require('playwright');
+import { error } from "console";
+
 
 class LoginPage {
     url;
@@ -9,13 +10,20 @@ class LoginPage {
     context;
 
     constructor(browser) {
-        this.browser = browser;
-        this.url = "https://animated-gingersnap-8cf7f2.netlify.app"
+            this.browser = browser;
+            this.url = "https://animated-gingersnap-8cf7f2.netlify.app"
     }
+
 
     async navigate() {
         this.context = await this.browser.newContext();
         this.page = await this.context.newPage();
+
+        if (!this.page) {
+            this.context = await this.browser.newContext();
+            this.page = await this.context.newPage();
+        }
+
 
         this.usernameField = this.page.locator('#username');
         this.passwordField = this.page.locator('#password');
@@ -26,12 +34,23 @@ class LoginPage {
     }
 
     async login() {
-        await this.loginButton.waitFor({ state: 'visible' });
-        await this.usernameField.fill('admin');
-        await this.passwordField.fill('password123');
-        await this.loginButton.click();
-        await this.page.waitForLoadState('domcontentloaded');
-        await this.context.storageState({ path: 'fixtures/auth-state.json' });
+
+        try {
+            await this.loginButton.waitFor({ state: 'visible' });
+            await this.usernameField.fill('admin');
+            await this.passwordField.fill('password123');
+            await this.loginButton.click();
+            await this.page.waitForLoadState('domcontentloaded');
+
+            const headerText = await this.page.locator('header h1').textContent();
+            if (headerText !== 'Web Application') {
+                throw new Error('Logging failed!');
+            }
+        } catch (error) {
+            console.error(`Logging failed`, error);
+            throw error
+        }
+
     }
 
     async getPage() {
@@ -39,6 +58,13 @@ class LoginPage {
             throw new Error("Page is not initialized. Please call navigate() first.");
         }
         return this.page;
+    }
+
+    async getContext() {
+        if (!this.context) {
+            throw new Error("Context is not initialized. Please call navigate() first.");
+        }
+        return this.context;
     }
 }
 

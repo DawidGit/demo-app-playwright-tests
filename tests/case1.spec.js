@@ -15,8 +15,12 @@ test('test case 1', async ({ browser }) => {
     const taskListFromCoumntToDo = await dashboardPage.getAllTasksFromColumn(columnToDo);
     const fetchedTask = await dashboardPage.getTaskFromTaskList(expectedTaskName, taskListFromCoumntToDo);
     const fetchedTaskName = await dashboardPage.getNameFromTask(fetchedTask);
+    const taskTags = await dashboardPage.getTaskTags(fetchedTask);
 
     expect(fetchedTaskName).toBe(expectedTaskName);
+    expect(taskTags).toHaveLength(2)
+    expect(taskTags[0]).toBe('Feature');
+    expect(taskTags[1]).toBe('High Priority');
 
 
 });
