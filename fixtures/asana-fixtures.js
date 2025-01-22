@@ -24,7 +24,7 @@ class AsanaFixtures {
        return result;
       }
 
-      is
+    
       
 }
 

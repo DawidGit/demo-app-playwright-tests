@@ -33,12 +33,12 @@ class LoginPage {
         await this.page.waitForLoadState('domcontentloaded');
     }
 
-    async login() {
+    async login(login, password) {
 
         try {
             await this.loginButton.waitFor({ state: 'visible' });
-            await this.usernameField.fill('admin');
-            await this.passwordField.fill('password123');
+            await this.usernameField.fill(login);
+            await this.passwordField.fill(password);
             await this.loginButton.click();
             await this.page.waitForLoadState('domcontentloaded');
 
@@ -65,6 +65,10 @@ class LoginPage {
             throw new Error("Context is not initialized. Please call navigate() first.");
         }
         return this.context;
+    }
+
+    async close(){
+        await this.page?.close();
     }
 }
 
